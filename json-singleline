@@ -1,0 +1,33 @@
+input
+{
+    file
+    {
+        path => ["/home/ubuntu/example.json"]
+        start_position => "beginning"
+        type => "json"
+    }
+}
+
+filter
+{
+    mutate
+    {
+        replace => [ "message", "%{message}" ]
+    }
+    if [type] == "json"
+    {
+        json { source => message }
+    }
+
+}
+
+output
+{
+  elasticsearch {
+    hosts => ["localhost:9200"]
+    index => "json"
+    manage_template => false
+  }
+
+    stdout { codec => rubydebug }
+}
