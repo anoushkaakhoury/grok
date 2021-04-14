@@ -1,0 +1,22 @@
+input {
+  file {
+    path => ["/home/ubuntu/uptime.log"]
+
+  }
+}
+
+
+filter {
+ grok {
+   match => [ "message" ,"%{GREEDYDATA:zone_time}"]
+   #overwrite => [ "message" ]
+ }
+
+output {
+  elasticsearch {
+    hosts => ["localhost:9200"]
+    manage_template => false
+    index => "uptime-%{+YYYY.MM.dd}"
+  }
+stdout { codec => rubydebug }
+}
